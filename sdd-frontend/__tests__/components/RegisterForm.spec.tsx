@@ -15,7 +15,7 @@ jest.mock('@/lib/axios', () => ({
   default: { post: jest.fn() },
 }));
 
-const mockPost = (api as { post: jest.Mock }).post;
+const mockPost = (api as unknown as { post: jest.Mock }).post;
 
 function createAxiosError(status: number, message: string) {
   const error = new axios.AxiosError(message);

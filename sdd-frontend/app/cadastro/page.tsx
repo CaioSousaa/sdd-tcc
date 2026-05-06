@@ -12,7 +12,7 @@ export default function RegisterPage() {
         <h1 className="mb-2 text-2xl font-bold text-zinc-50">Criar conta</h1>
         <p className="mb-6 text-sm text-zinc-400">
           Já tem uma conta?{' '}
-          <Link href="/login" className="text-amber-400 hover:underline">
+          <Link href="/" className="text-amber-400 hover:underline">
             Entrar
           </Link>
         </p>

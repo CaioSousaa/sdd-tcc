@@ -8,9 +8,8 @@ import { ApiError } from '@/types';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 
-export default function RegisterForm() {
+export default function LoginForm() {
   const router = useRouter();
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -22,8 +21,9 @@ export default function RegisterForm() {
     setIsLoading(true);
 
     try {
-      await api.post('/users', { name, email, password });
-      router.push('/');
+      const { data } = await api.post<{ token: string }>('/auth', { email, password });
+      localStorage.setItem('token', data.token);
+      router.push('/home');
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         const data = err.response.data as ApiError;
@@ -38,15 +38,6 @@ export default function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <Input
-        id="name"
-        label="Nome"
-        type="text"
-        placeholder="Seu nome"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        autoComplete="name"
-      />
       <Input
         id="email"
         label="E-mail"
@@ -63,7 +54,7 @@ export default function RegisterForm() {
         placeholder="••••••••"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        autoComplete="new-password"
+        autoComplete="current-password"
       />
 
       {error && (
@@ -73,7 +64,7 @@ export default function RegisterForm() {
       )}
 
       <Button type="submit" isLoading={isLoading}>
-        Criar conta
+        Entrar
       </Button>
     </form>
   );

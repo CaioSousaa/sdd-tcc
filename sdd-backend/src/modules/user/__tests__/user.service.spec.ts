@@ -24,7 +24,7 @@ describe('UserService.createUser', () => {
   });
 
   it('should throw DuplicateEmailError when email is already registered', async () => {
-    mockRepository.findByEmail.mockResolvedValue({ email: 'caio@test.com' });
+    mockRepository.findByEmail.mockResolvedValue({ _id: '123', email: 'caio@test.com', password: 'hashed' });
 
     await expect(
       service.createUser({ name: 'Caio', email: 'caio@test.com', password: 'secret123' })
