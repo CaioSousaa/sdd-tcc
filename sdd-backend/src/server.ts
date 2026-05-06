@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { connectDB } from './infra/mongo/connection';
 import userRouter from './routes/user.routes';
+import authRouter from './routes/auth.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3333;
@@ -15,6 +16,7 @@ app.get('/', (_req, res) => {
 });
 
 app.use('/users', userRouter);
+app.use('/auth', authRouter);
 
 connectDB()
   .then(() => {
