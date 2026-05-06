@@ -7,7 +7,8 @@ export class UserRepository implements UserRepositoryPort {
     return UserModel.findOne({ email }).select('_id email password').lean() as Promise<UserRecord | null>;
   }
 
-  async create(data: CreateUserDTO & { password: string }): Promise<void> {
-    await UserModel.create(data);
+  async create(data: CreateUserDTO & { password: string }): Promise<UserRecord> {
+    const doc = await UserModel.create(data);
+    return { _id: doc._id.toString(), email: doc.email, password: doc.password };
   }
 }

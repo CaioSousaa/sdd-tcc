@@ -19,8 +19,8 @@ export class UserController {
     const { name, email, password } = req.body as Record<RequiredField, string>;
 
     try {
-      await this.userService.createUser({ name, email, password });
-      res.status(201).json({ message: 'Usuário cadastrado com sucesso' });
+      const { token } = await this.userService.createUser({ name, email, password });
+      res.status(201).json({ message: 'Usuário cadastrado com sucesso', token });
     } catch (error) {
       if (error instanceof DuplicateEmailError) {
         res.status(409).json({ message: error.message });

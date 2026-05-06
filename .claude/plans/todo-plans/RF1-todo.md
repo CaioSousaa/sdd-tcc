@@ -50,6 +50,6 @@
 ### Validação Frontend
 - [x] **F10** Verificar no browser: renderização da página `/cadastro`
 - [x] **F11** Verificar no browser: erro inline ao submeter com campo vazio
-- [x] **F12** Verificar no browser: cadastro válido redireciona para `/login`
+- [x] **F12** Verificar no browser: cadastro válido redireciona para `/home`
 - [x] **F13** Verificar no browser: e-mail duplicado exibe erro inline
 - [x] **F14** `npx tsc --noEmit` sem erros no frontend

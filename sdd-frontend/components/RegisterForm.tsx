@@ -23,7 +23,7 @@ export default function RegisterForm() {
 
     try {
       await api.post('/users', { name, email, password });
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         const data = err.response.data as ApiError;

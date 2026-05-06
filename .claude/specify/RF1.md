@@ -39,6 +39,7 @@
 4. Dado uma requisição sem `password`, o sistema deve retornar `400` com a mensagem `"O campo password é obrigatório"`.
 5. Dado uma requisição com um `email` já presente no banco, o sistema deve retornar `409` com a mensagem `"E-mail já cadastrado, por favor tente outro"`.
 6. A senha jamais deve ser armazenada em texto puro — deve ser criptografada com bcrypt antes de persistir.
+7. Após o cadastro bem-sucedido, o usuário deve ser redirecionado automaticamente para a tela de home.
 
 ---
 

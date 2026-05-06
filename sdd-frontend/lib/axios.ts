@@ -10,4 +10,21 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      (error.response.data as { message?: string }).message ===
+        'Token expirado, faça login novamente'
+    ) {
+      localStorage.removeItem('token');
+      alert('Token expirado, faça login novamente');
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  },
+);
+
 export default api;

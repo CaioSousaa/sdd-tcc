@@ -159,7 +159,7 @@ curl -s -X POST http://localhost:3333/users \
 # 5. Frontend
 cd sdd-frontend && npm run dev
 # Navegar para http://localhost:3001/cadastro
-# Testar: campo vazio → erro inline; cadastro válido → redirect /login;
+# Testar: campo vazio → erro inline; cadastro válido → redirect /home;
 # e-mail duplicado → erro inline; backend offline → "Erro inesperado"
 
 # 6. TypeScript
