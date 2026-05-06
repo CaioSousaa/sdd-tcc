@@ -1,0 +1,1 @@
+use como cores base zinc-900 e amber-400
