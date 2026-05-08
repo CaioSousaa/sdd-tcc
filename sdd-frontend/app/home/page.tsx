@@ -1,14 +1,15 @@
 import AuthGuard from '@/components/AuthGuard';
-import CreateTaskForm from '@/components/CreateTaskForm';
+import TaskBoard from '@/components/TaskBoard';
 
 export const metadata = { title: 'Home — SDD' };
 
 export default function HomePage() {
   return (
     <AuthGuard>
-      <main className="flex min-h-screen items-center justify-center bg-zinc-900 p-4">
-        <CreateTaskForm />
+      <main className="min-h-screen bg-zinc-950">
+        <TaskBoard />
       </main>
     </AuthGuard>
   );
 }
+
