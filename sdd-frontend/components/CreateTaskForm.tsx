@@ -6,6 +6,8 @@ import api from '@/lib/axios';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { Tag } from '@/types';
+import ManageTagsModal from './ManageTagsModal';
+import { Settings2 } from 'lucide-react';
 
 const SELECT_CLASSES =
   'rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors w-full';
@@ -25,10 +27,20 @@ export default function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
 
   useEffect(() => {
-    api.get<Tag[]>('/tags').then((res) => setAvailableTags(res.data)).catch(() => {});
+    fetchTags();
   }, []);
+
+  async function fetchTags() {
+    try {
+      const res = await api.get<Tag[]>('/tags');
+      setAvailableTags(res.data);
+    } catch (err) {
+      console.error('Erro ao buscar tags:', err);
+    }
+  }
 
   function toggleTag(id: string) {
     setSelectedTags((prev) =>
@@ -71,7 +83,7 @@ export default function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
   }
 
   return (
-    <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6 w-full max-w-lg">
+    <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6 w-full max-w-lg shadow-2xl">
       <h2 className="text-lg font-semibold text-zinc-100 mb-5">Nova tarefa</h2>
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
@@ -79,6 +91,7 @@ export default function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
           id="task-title"
           label="Título"
           type="text"
+          placeholder="O que precisa ser feito?"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -91,6 +104,7 @@ export default function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
             id="task-description"
             rows={3}
             value={description}
+            placeholder="Adicione mais detalhes..."
             onChange={(e) => setDescription(e.target.value)}
             className="rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors resize-none"
           />
@@ -138,31 +152,46 @@ export default function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
           onChange={(e) => setDueDate(e.target.value)}
         />
 
-        {availableTags.length > 0 && (
-          <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-zinc-300">Tags</span>
-            <div className="flex flex-wrap gap-2">
-              {availableTags.map((tag) => {
+            <button
+              type="button"
+              onClick={() => setIsTagModalOpen(true)}
+              className="flex items-center gap-1.5 text-xs font-medium text-amber-400 hover:text-amber-300 transition-colors"
+            >
+              <Settings2 size={14} />
+              Gerenciar Tags
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-2 min-h-[32px] items-center">
+            {availableTags.length > 0 ? (
+              availableTags.map((tag) => {
                 const selected = selectedTags.includes(tag.id);
                 return (
                   <button
                     key={tag.id}
                     type="button"
                     onClick={() => toggleTag(tag.id)}
-                    style={{ borderColor: tag.color, color: selected ? tag.color : undefined }}
-                    className={`px-3 py-1 rounded-full text-xs border transition-colors ${
-                      selected
-                        ? 'bg-zinc-800 font-semibold'
-                        : 'border-zinc-600 text-zinc-400 hover:border-zinc-400'
+                    style={{ 
+                      borderColor: tag.color, 
+                      color: selected ? '#fff' : tag.color,
+                      backgroundColor: selected ? tag.color : 'transparent'
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs border transition-all hover:brightness-110 ${
+                      selected ? 'font-bold shadow-lg scale-105' : 'bg-transparent'
                     }`}
                   >
                     {tag.name}
                   </button>
                 );
-              })}
-            </div>
+              })
+            ) : (
+              <p className="text-xs text-zinc-500 italic">Você ainda não tem tags.</p>
+            )}
           </div>
-        )}
+        </div>
 
         <Input
           id="task-alert"
@@ -182,6 +211,12 @@ export default function CreateTaskForm({ onSuccess }: CreateTaskFormProps) {
           Criar tarefa
         </Button>
       </form>
+
+      <ManageTagsModal
+        isOpen={isTagModalOpen}
+        onClose={() => setIsTagModalOpen(false)}
+        onTagsChange={fetchTags}
+      />
     </div>
   );
 }
