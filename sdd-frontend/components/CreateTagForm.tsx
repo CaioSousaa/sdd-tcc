@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import api from '@/lib/axios';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 
 const TAG_COLORS = [
   { hex: '#F59E0B', label: 'Amber' },
@@ -31,11 +33,11 @@ export default function CreateTagForm({ unavailableColors = [], onSuccess }: Cre
     e.preventDefault();
 
     if (!name.trim()) {
-      setError('o name é obrigatório');
+      setError('O nome é obrigatório');
       return;
     }
     if (!color) {
-      setError('o color é obrigatório');
+      setError('Selecione uma cor');
       return;
     }
 
@@ -44,6 +46,8 @@ export default function CreateTagForm({ unavailableColors = [], onSuccess }: Cre
 
     try {
       await api.post('/tags', { name, color });
+      setName('');
+      setColor('');
       onSuccess?.();
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -57,35 +61,43 @@ export default function CreateTagForm({ unavailableColors = [], onSuccess }: Cre
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
-      <div>
-        <label htmlFor="tag-name">Nome</label>
-        <input
-          id="tag-name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+      <Input
+        id="tag-name"
+        label="Nome da Tag"
+        type="text"
+        placeholder="Ex: Urgente, Pessoal..."
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-medium text-zinc-300">Cor</label>
+        <div className="flex flex-wrap gap-3">
+          {availableColors.map((c) => (
+            <button
+              key={c.hex}
+              type="button"
+              aria-label={c.label}
+              onClick={() => setColor(c.hex)}
+              className={`h-8 w-8 rounded-full border-2 transition-all hover:scale-110 ${
+                color === c.hex ? 'border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'border-transparent'
+              }`}
+              style={{ backgroundColor: c.hex }}
+            />
+          ))}
+        </div>
       </div>
 
-      <fieldset>
-        <legend>Cor</legend>
-        {availableColors.map((c) => (
-          <button
-            key={c.hex}
-            type="button"
-            aria-label={c.label}
-            aria-pressed={color === c.hex}
-            onClick={() => setColor(c.hex)}
-          />
-        ))}
-      </fieldset>
+      {error && (
+        <p role="alert" className="text-red-400 text-sm">
+          {error}
+        </p>
+      )}
 
-      {error && <p role="alert">{error}</p>}
-
-      <button type="submit" disabled={isLoading}>
-        {isLoading ? 'Aguarde...' : 'Criar tag'}
-      </button>
+      <Button type="submit" isLoading={isLoading} className="mt-2">
+        Criar Tag
+      </Button>
     </form>
   );
 }
