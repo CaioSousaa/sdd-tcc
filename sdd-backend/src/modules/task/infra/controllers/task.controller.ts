@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { TASK_STATUSES, TASK_PRIORITIES } from '../../../../config/taskEnums';
 import { TaskServicePort } from '../../port/task-service.port';
-import { TagNotFoundError } from '../../services/task.service';
+import { TagNotFoundError, TaskNotFoundError } from '../../services/task.service';
 
 const REQUIRED_FIELDS = ['title', 'description', 'status', 'priority', 'dueDate'] as const;
 
@@ -42,4 +42,55 @@ export class TaskController {
       }
     }
   }
+
+  async list(req: Request, res: Response): Promise<void> {
+    try {
+      const tasks = await this.taskService.listTasks(req.userId!);
+      res.status(200).json(tasks);
+    } catch (error) {
+      res.status(500).json({ message: 'erro interno do servidor' });
+    }
+  }
+
+  async update(req: Request, res: Response): Promise<void> {
+    const { taskId } = req.params as { taskId: string };
+    const { status, priority } = req.body;
+
+    if (status && !TASK_STATUSES.includes(status)) {
+      res.status(400).json({ message: 'Status inválido' });
+      return;
+    }
+
+    if (priority && !TASK_PRIORITIES.includes(priority)) {
+      res.status(400).json({ message: 'Prioridade inválida' });
+      return;
+    }
+
+    try {
+      const task = await this.taskService.updateTask(taskId, req.userId!, req.body);
+      res.status(200).json({ message: 'Tarefa editada com sucesso', task });
+    } catch (error) {
+      if (error instanceof TaskNotFoundError || error instanceof TagNotFoundError) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: 'erro interno do servidor' });
+      }
+    }
+  }
+
+  async delete(req: Request, res: Response): Promise<void> {
+    const { taskId } = req.params as { taskId: string };
+
+    try {
+      await this.taskService.deleteTask(taskId, req.userId!);
+      res.status(200).json({ message: 'Tarefa deletada com sucesso' });
+    } catch (error) {
+      if (error instanceof TaskNotFoundError) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: 'erro interno do servidor' });
+      }
+    }
+  }
 }
+
