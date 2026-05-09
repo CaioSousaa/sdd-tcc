@@ -3,7 +3,7 @@ import { TaskRepository } from '../infra/repository/task.repository';
 import { TaskService } from '../services/task.service';
 import { TaskController } from '../infra/controllers/task.controller';
 import { schedulerService } from '../../../infra/scheduler/scheduler.service';
-import { notificationService } from '../../notification/services/notification.service';
+import { notificationService } from '../../notification/factories/notification.factory';
 
 export function makeTaskController(): TaskController {
   const taskRepository = new TaskRepository();

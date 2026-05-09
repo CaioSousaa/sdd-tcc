@@ -1,14 +1,12 @@
 import AuthGuard from '@/components/AuthGuard';
-import TaskBoard from '@/components/TaskBoard';
+import HomeContent from '@/components/HomeContent';
 
 export const metadata = { title: 'Home — SDD' };
 
 export default function HomePage() {
   return (
     <AuthGuard>
-      <main className="min-h-screen bg-zinc-950">
-        <TaskBoard />
-      </main>
+      <HomeContent />
     </AuthGuard>
   );
 }

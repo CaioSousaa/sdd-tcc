@@ -1,7 +1,7 @@
 # SDD — Contexto do Projeto
 
 Projeto de TCC. Monorepo com backend em Express/TypeScript e frontend em Next.js/React.
-Execucao de uma RF Deve contemplar frontend e backend
+Execucao de uma RF Deve contemplar frontend e backend - Sempre deixe claro em todos os arquivos gerados a partir da leitura desse contexto. 
 
 ## Stack
 

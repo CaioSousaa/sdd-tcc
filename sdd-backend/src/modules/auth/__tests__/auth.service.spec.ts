@@ -9,7 +9,9 @@ jest.mock('../../../config/jwt', () => ({
 
 const mockRepository: jest.Mocked<UserRepositoryPort> = {
   findByEmail: jest.fn(),
+  findById: jest.fn(),
   create: jest.fn(),
+  update: jest.fn(),
 };
 
 const service = new AuthService(mockRepository);

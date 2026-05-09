@@ -29,6 +29,8 @@ const mockScheduler: jest.Mocked<SchedulerServicePort> = {
 
 const mockNotificationService: jest.Mocked<NotificationServicePort> = {
   createFromAlert: jest.fn(),
+  markAsRead: jest.fn(),
+  listNotifications: jest.fn(),
 };
 
 const service = new TaskService(mockTaskRepository, mockTagRepository, mockScheduler, mockNotificationService);

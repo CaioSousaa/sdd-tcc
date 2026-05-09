@@ -12,6 +12,7 @@ function mockRes(): Response {
 
 const mockService: jest.Mocked<AuthServicePort> = {
   login: jest.fn(),
+  logout: jest.fn(),
 };
 
 const controller = new AuthController(mockService);
