@@ -1,6 +1,8 @@
 import { TagRepositoryPort } from '../../tag/port/tag-repository.port';
 import { TaskRepositoryPort, Task } from '../port/task-repository.port';
 import { TaskServicePort } from '../port/task-service.port';
+import { SchedulerServicePort } from '../port/scheduler-service.port';
+import { NotificationServicePort } from '../../notification/port/notification-service.port';
 import { CreateTaskDTO } from '../dto/create-task.dto';
 import { UpdateTaskDTO } from '../dto/update-task.dto';
 
@@ -25,18 +27,40 @@ export class InvalidPriorityError extends Error {
   }
 }
 
+export class AlertInPastError extends Error {
+  constructor() {
+    super('O horário do alerta deve ser uma data futura');
+    this.name = 'AlertInPastError';
+  }
+}
+
 export class TaskService implements TaskServicePort {
   constructor(
     private readonly taskRepository: TaskRepositoryPort,
     private readonly tagRepository: TagRepositoryPort,
+    private readonly scheduler: SchedulerServicePort,
+    private readonly notificationService: NotificationServicePort,
   ) {}
 
   async createTask(data: CreateTaskDTO, userId: string): Promise<void> {
+    if (data.alert) {
+      const alertDate = new Date(data.alert);
+      if (alertDate <= new Date()) throw new AlertInPastError();
+    }
+
     for (const tagId of data.tags) {
       const tag = await this.tagRepository.findById(tagId);
       if (!tag || tag.owner !== userId) throw new TagNotFoundError();
     }
-    await this.taskRepository.create({ ...data, owner: userId });
+
+    const task = await this.taskRepository.create({ ...data, owner: userId });
+
+    if (data.alert) {
+      const alertDate = new Date(data.alert);
+      this.scheduler.schedule(task.id, alertDate, () => {
+        this.notificationService.createFromAlert(task.id, userId);
+      });
+    }
   }
 
   async listTasks(userId: string, filters?: { priority?: string; tags?: string[] }): Promise<Task[]> {
@@ -60,6 +84,11 @@ export class TaskService implements TaskServicePort {
       throw new TaskNotFoundError();
     }
 
+    if (data.alert) {
+      const alertDate = new Date(data.alert);
+      if (alertDate <= new Date()) throw new AlertInPastError();
+    }
+
     if (data.tags) {
       for (const tagId of data.tags) {
         const tag = await this.tagRepository.findById(tagId);
@@ -70,6 +99,16 @@ export class TaskService implements TaskServicePort {
     const updatedTask = await this.taskRepository.update(taskId, data);
     if (!updatedTask) throw new TaskNotFoundError();
 
+    this.scheduler.cancel(taskId);
+
+    if (data.alert) {
+      const alertDate = new Date(data.alert);
+      const ownerId = userId;
+      this.scheduler.schedule(taskId, alertDate, () => {
+        this.notificationService.createFromAlert(taskId, ownerId);
+      });
+    }
+
     return updatedTask;
   }
 
@@ -79,7 +118,7 @@ export class TaskService implements TaskServicePort {
       throw new TaskNotFoundError();
     }
 
+    this.scheduler.cancel(taskId);
     await this.taskRepository.delete(taskId);
   }
 }
-

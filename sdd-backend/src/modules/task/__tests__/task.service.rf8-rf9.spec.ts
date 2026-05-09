@@ -1,6 +1,8 @@
 import { TaskService, TagNotFoundError, TaskNotFoundError } from '../services/task.service';
 import { TaskRepositoryPort, Task } from '../port/task-repository.port';
 import { TagRepositoryPort } from '../../tag/port/tag-repository.port';
+import { SchedulerServicePort } from '../port/scheduler-service.port';
+import { NotificationServicePort } from '../../notification/port/notification-service.port';
 
 const mockTaskRepository: jest.Mocked<TaskRepositoryPort> = {
     create: jest.fn(),
@@ -20,7 +22,16 @@ const mockTagRepository: jest.Mocked<TagRepositoryPort> = {
     findTagsByIdsAndOwner: jest.fn(),
 };
 
-const service = new TaskService(mockTaskRepository, mockTagRepository);
+const mockScheduler: jest.Mocked<SchedulerServicePort> = {
+    schedule: jest.fn(),
+    cancel: jest.fn(),
+};
+
+const mockNotificationService: jest.Mocked<NotificationServicePort> = {
+    createFromAlert: jest.fn(),
+};
+
+const service = new TaskService(mockTaskRepository, mockTagRepository, mockScheduler, mockNotificationService);
 
 const TASK: Task = {
     id: 'task-1',
@@ -49,7 +60,7 @@ describe('TaskService — RF8 e RF9 (Listagem, Edição e Exclusão)', () => {
 
             await service.listTasks('user-1');
 
-            expect(mockTaskRepository.findAllByOwner).toHaveBeenCalledWith('user-1');
+            expect(mockTaskRepository.findAllByOwner).toHaveBeenCalledWith('user-1', undefined);
         });
 
         it('deve retornar as tarefas retornadas pelo repositório', async () => {
