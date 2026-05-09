@@ -20,8 +20,9 @@ export class TaskRepository implements TaskRepositoryPort {
     };
   }
 
-  async create(data: CreateTaskDTO & { owner: string }): Promise<void> {
-    await TaskModel.create(data as any);
+  async create(data: CreateTaskDTO & { owner: string }): Promise<Task> {
+    const task = await TaskModel.create(data as any);
+    return this.mapToTask(task);
   }
 
   async findById(id: string): Promise<Task | null> {

@@ -1,6 +1,8 @@
 import { TaskService, TagNotFoundError, InvalidPriorityError } from '../services/task.service';
 import { TaskRepositoryPort } from '../port/task-repository.port';
 import { TagRepositoryPort } from '../../tag/port/tag-repository.port';
+import { SchedulerServicePort } from '../port/scheduler-service.port';
+import { NotificationServicePort } from '../../notification/port/notification-service.port';
 
 const mockTaskRepository: jest.Mocked<TaskRepositoryPort> = {
   create: jest.fn(),
@@ -20,7 +22,16 @@ const mockTagRepository: jest.Mocked<TagRepositoryPort> = {
   findTagsByIdsAndOwner: jest.fn(),
 };
 
-const service = new TaskService(mockTaskRepository, mockTagRepository);
+const mockScheduler: jest.Mocked<SchedulerServicePort> = {
+  schedule: jest.fn(),
+  cancel: jest.fn(),
+};
+
+const mockNotificationService: jest.Mocked<NotificationServicePort> = {
+  createFromAlert: jest.fn(),
+};
+
+const service = new TaskService(mockTaskRepository, mockTagRepository, mockScheduler, mockNotificationService);
 
 const BASE_DTO = {
   title: 'Minha tarefa',
@@ -94,9 +105,14 @@ describe('TaskService.createTask — criação', () => {
   });
 
   it('includes alert in the repository call when provided', async () => {
-    await service.createTask({ ...BASE_DTO, alert: '2025-12-31T09:00:00' }, 'user-1');
+    const futureAlert = '2030-12-31T09:00:00';
+    mockTaskRepository.create.mockResolvedValue({
+      id: 'task-1', title: '', description: '', status: 'todo', priority: 'high',
+      dueDate: new Date(), owner: 'user-1', tags: [], createdAt: new Date(), updatedAt: new Date(),
+    });
+    await service.createTask({ ...BASE_DTO, alert: futureAlert }, 'user-1');
     expect(mockTaskRepository.create).toHaveBeenCalledWith(
-      expect.objectContaining({ alert: '2025-12-31T09:00:00' }),
+      expect.objectContaining({ alert: futureAlert }),
     );
   });
 });

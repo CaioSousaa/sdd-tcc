@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { TASK_STATUSES, TASK_PRIORITIES } from '../../../../config/taskEnums';
 import { TaskServicePort } from '../../port/task-service.port';
-import { TagNotFoundError, TaskNotFoundError, InvalidPriorityError } from '../../services/task.service';
+import { TagNotFoundError, TaskNotFoundError, InvalidPriorityError, AlertInPastError } from '../../services/task.service';
 
 const REQUIRED_FIELDS = ['title', 'description', 'status', 'priority', 'dueDate'] as const;
 
@@ -35,8 +35,8 @@ export class TaskController {
       );
       res.status(201).json({ message: 'Tarefa criada com sucesso' });
     } catch (error) {
-      if (error instanceof TagNotFoundError) {
-        res.status(400).json({ message: error.message });
+      if (error instanceof TagNotFoundError || error instanceof AlertInPastError) {
+        res.status(400).json({ message: (error as Error).message });
       } else {
         res.status(500).json({ message: 'erro interno do servidor' });
       }
@@ -86,8 +86,8 @@ export class TaskController {
       const task = await this.taskService.updateTask(taskId, req.userId!, req.body);
       res.status(200).json({ message: 'Tarefa editada com sucesso', task });
     } catch (error) {
-      if (error instanceof TaskNotFoundError || error instanceof TagNotFoundError) {
-        res.status(400).json({ message: error.message });
+      if (error instanceof TaskNotFoundError || error instanceof TagNotFoundError || error instanceof AlertInPastError) {
+        res.status(400).json({ message: (error as Error).message });
       } else {
         res.status(500).json({ message: 'erro interno do servidor' });
       }
