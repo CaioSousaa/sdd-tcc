@@ -11,6 +11,7 @@ import Button from '@/components/ui/Button';
 
 
 export default function TaskBoard() {
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [filterPriority, setFilterPriority] = useState<string>('all');
@@ -24,18 +25,27 @@ export default function TaskBoard() {
   const fetchTasks = useCallback(async () => {
     setIsLoading(true);
     try {
-      const params: any = {};
-      if (filterPriority !== 'all') params.priority = filterPriority;
-      if (filterTags.length > 0) params.tags = filterTags.join(',');
-
-      const res = await api.get<Task[]>('/tasks', { params });
-      setTasks(res.data);
+      const res = await api.get<Task[]>('/tasks');
+      setAllTasks(res.data);
     } catch (err) {
       console.error('Erro ao buscar tarefas:', err);
     } finally {
       setIsLoading(false);
     }
-  }, [filterPriority, filterTags]);
+  }, []);
+
+  useEffect(() => {
+    let filtered = allTasks;
+    if (filterPriority !== 'all') {
+      filtered = filtered.filter(t => t.priority === filterPriority);
+    }
+    if (filterTags.length > 0) {
+      filtered = filtered.filter(t =>
+        filterTags.every(tagId => t.tags?.some((tag: Tag) => tag.id === tagId))
+      );
+    }
+    setTasks(filtered);
+  }, [allTasks, filterPriority, filterTags]);
 
   const fetchTags = useCallback(async () => {
     try {
@@ -68,7 +78,7 @@ export default function TaskBoard() {
     if (!taskToDelete) return;
     try {
       await api.delete(`/tasks/${taskToDelete}`);
-      setTasks(prev => prev.filter(t => t.id !== taskToDelete));
+      setAllTasks(prev => prev.filter(t => t.id !== taskToDelete));
       setIsDeleteModalOpen(false);
     } catch (err) {
       console.error('Erro ao excluir tarefa:', err);
