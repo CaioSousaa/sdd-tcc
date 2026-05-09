@@ -1,4 +1,4 @@
-import { TaskService, TagNotFoundError } from '../services/task.service';
+import { TaskService, TagNotFoundError, InvalidPriorityError } from '../services/task.service';
 import { TaskRepositoryPort } from '../port/task-repository.port';
 import { TagRepositoryPort } from '../../tag/port/tag-repository.port';
 
@@ -17,6 +17,7 @@ const mockTagRepository: jest.Mocked<TagRepositoryPort> = {
   findById: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
+  findTagsByIdsAndOwner: jest.fn(),
 };
 
 const service = new TaskService(mockTaskRepository, mockTagRepository);

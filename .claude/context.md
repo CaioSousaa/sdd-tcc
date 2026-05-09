@@ -76,12 +76,11 @@ RF7 – O sistema deve permitir que o usuário crie novas tarefas informando tí
 RF8 – O sistema deve permitir o usuário editar todas as informações de uma tarefa.
 RF9 – O sistema deve permitir o usuário excluir qualquer tarefa, pedindo confirmação antes de excluir.
 RF10 – O sistema deve exibir as tarefas do usuário divididas em três colunas (Todo, In Progress e Done), ordenadas por prioridade e data de vencimento.
-RF11 – O sistema deve mover automaticamente a tarefa para a coluna correspondente ao seu status sempre que ele for alterado.
-RF12 – O sistema deve permitir que o usuário filtre suas tarefas por prioridade e tags.
-RF13 – O sistema deve agendar um job automaticamente ao definir um alerta em uma tarefa.
-RF14 – O sistema deve criar uma notificação quando o horário do alerta de uma tarefa for atingido.
-RF15 – O sistema deve permitir que o usuário marque uma notificação como lida.
-RF16 – O sistema deve exibir um menu do usuário com opções de configurações (permitindo alterar nome e senha), logout e notificações.
+RF11 – O sistema deve permitir que o usuário filtre suas tarefas por prioridade e tags.
+RF12 – O sistema deve agendar um job automaticamente ao definir um alerta em uma tarefa.
+RF13 – O sistema deve criar uma notificação quando o horário do alerta de uma tarefa for atingido.
+RF14 – O sistema deve permitir que o usuário marque uma notificação como lida.
+RF15 – O sistema deve exibir um menu do usuário com opções de configurações (permitindo alterar nome e senha), logout e notificações.
 
 Schemas:
 User 

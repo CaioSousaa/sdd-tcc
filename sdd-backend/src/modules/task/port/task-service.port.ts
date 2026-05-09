@@ -6,6 +6,6 @@ export interface TaskServicePort {
   createTask(data: CreateTaskDTO, userId: string): Promise<void>;
   updateTask(taskId: string, userId: string, data: UpdateTaskDTO): Promise<Task>;
   deleteTask(taskId: string, userId: string): Promise<void>;
-  listTasks(userId: string): Promise<Task[]>;
+  listTasks(userId: string, filters?: { priority?: string; tags?: string[] }): Promise<Task[]>;
 }
 
