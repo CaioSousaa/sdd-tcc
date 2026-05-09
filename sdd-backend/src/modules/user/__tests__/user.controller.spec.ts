@@ -12,6 +12,7 @@ function mockRes(): Response {
 
 const mockService: jest.Mocked<UserServicePort> = {
   createUser: jest.fn(),
+  updateUser: jest.fn(),
 };
 
 const controller = new UserController(mockService);

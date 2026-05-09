@@ -3,7 +3,9 @@ import { UserRepositoryPort } from '../port/user-repository.port';
 
 const mockRepository: jest.Mocked<UserRepositoryPort> = {
   findByEmail: jest.fn(),
+  findById: jest.fn(),
   create: jest.fn(),
+  update: jest.fn(),
 };
 
 const service = new UserService(mockRepository);

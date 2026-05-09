@@ -6,6 +6,7 @@ import userRouter from './routes/user.routes';
 import authRouter from './routes/auth.routes';
 import tagRouter from './routes/tag.routes';
 import taskRouter from './routes/task.routes';
+import notificationRouter from './routes/notification.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3333;
@@ -22,6 +23,7 @@ app.use('/users', userRouter);
 app.use('/auth', authRouter);
 app.use('/tags', tagRouter);
 app.use('/tasks', taskRouter);
+app.use('/notifications', notificationRouter);
 
 connectDB()
   .then(() => {

@@ -4,6 +4,7 @@ import { AuthServicePort } from '../port/auth-service.port';
 import { LoginDTO } from '../dto/login.dto';
 import { InvalidCredentialsError } from '../../../shared/errors/invalid-credentials.error';
 import { signToken } from '../../../config/jwt';
+import { addToBlacklist } from '../../../infra/token-blacklist';
 
 export class AuthService implements AuthServicePort {
   constructor(private readonly userRepository: UserRepositoryPort) {}
@@ -17,5 +18,9 @@ export class AuthService implements AuthServicePort {
 
     const token = signToken(user._id.toString());
     return { token };
+  }
+
+  async logout(token: string): Promise<void> {
+    addToBlacklist(token);
   }
 }

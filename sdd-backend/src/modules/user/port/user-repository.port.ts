@@ -8,5 +8,7 @@ export interface UserRecord {
 
 export interface UserRepositoryPort {
   findByEmail(email: string): Promise<UserRecord | null>;
+  findById(id: string): Promise<UserRecord | null>;
   create(data: CreateUserDTO & { password: string }): Promise<UserRecord>;
+  update(id: string, data: { name?: string; password?: string }): Promise<void>;
 }

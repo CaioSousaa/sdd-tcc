@@ -22,3 +22,12 @@ export interface Task {
   updatedAt: string;
 }
 
+export interface Notification {
+  id: string;
+  owner: string;
+  task: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+}
+

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { isBlacklisted } from '../../infra/token-blacklist';
 
 const SECRET = process.env.JWT_SECRET ?? 'kandaidu92dj90ju32';
 
@@ -15,6 +16,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
 
   try {
     const payload = jwt.verify(token, SECRET) as jwt.JwtPayload;
+    if (isBlacklisted(token)) {
+      res.status(401).json({ message: 'Token inválido' });
+      return;
+    }
     req.userId = payload.sub;
     next();
   } catch (err) {

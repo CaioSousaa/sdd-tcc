@@ -5,6 +5,12 @@ import { InvalidCredentialsError } from '../../../../shared/errors/invalid-crede
 export class AuthController {
   constructor(private readonly authService: AuthServicePort) {}
 
+  async logout(req: Request, res: Response): Promise<void> {
+    const token = req.headers.authorization!.split(' ')[1];
+    await this.authService.logout(token);
+    res.status(200).json({ message: 'Logout realizado com sucesso' });
+  }
+
   async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
 
