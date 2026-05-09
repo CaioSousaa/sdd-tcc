@@ -11,8 +11,8 @@ function mockRes(): Response {
   return res;
 }
 
-function mockReq(body: object = {}, userId = 'user-1', params: object = {}): Request {
-  return { body, userId, params } as unknown as Request;
+function mockReq(body: object = {}, userId = 'user-1', params: object = {}, query: object = {}): Request {
+  return { body, userId, params, query } as unknown as Request;
 }
 
 const TASK: Task = {
@@ -62,7 +62,7 @@ describe('TaskController — RF8 e RF9 (Edição, Listagem e Exclusão)', () => 
 
       await controller.list(mockReq({}, 'user-99'), res);
 
-      expect(mockService.listTasks).toHaveBeenCalledWith('user-99');
+      expect(mockService.listTasks).toHaveBeenCalledWith('user-99', {});
     });
 
     it('deve retornar array vazio quando o usuário não tem tarefas', async () => {

@@ -16,6 +16,9 @@ function mockReq(body: object, userId = 'user-1'): Request {
 
 const mockService: jest.Mocked<TagServicePort> = {
   createTag: jest.fn(),
+  listTags: jest.fn(),
+  updateTag: jest.fn(),
+  deleteTag: jest.fn(),
 };
 
 const controller = new TagController(mockService);

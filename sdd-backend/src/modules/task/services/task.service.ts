@@ -18,6 +18,13 @@ export class TaskNotFoundError extends Error {
   }
 }
 
+export class InvalidPriorityError extends Error {
+  constructor() {
+    super('Prioridade inválida');
+    this.name = 'InvalidPriorityError';
+  }
+}
+
 export class TaskService implements TaskServicePort {
   constructor(
     private readonly taskRepository: TaskRepositoryPort,
@@ -32,8 +39,19 @@ export class TaskService implements TaskServicePort {
     await this.taskRepository.create({ ...data, owner: userId });
   }
 
-  async listTasks(userId: string): Promise<Task[]> {
-    return this.taskRepository.findAllByOwner(userId);
+  async listTasks(userId: string, filters?: { priority?: string; tags?: string[] }): Promise<Task[]> {
+    if (filters?.priority && !['low', 'medium', 'high'].includes(filters.priority)) {
+      throw new InvalidPriorityError();
+    }
+
+    if (filters?.tags && filters.tags.length > 0) {
+      const tags = await this.tagRepository.findTagsByIdsAndOwner(filters.tags, userId);
+      if (tags.length !== filters.tags.length) {
+        throw new TagNotFoundError();
+      }
+    }
+
+    return this.taskRepository.findAllByOwner(userId, filters);
   }
 
   async updateTask(taskId: string, userId: string, data: UpdateTaskDTO): Promise<Task> {

@@ -42,4 +42,13 @@ export class TagRepository implements TagRepositoryPort {
   async delete(id: string): Promise<void> {
     await TagModel.deleteOne({ _id: id });
   }
+
+  async findTagsByIdsAndOwner(tagIds: string[], userId: string): Promise<{ id: string, name: string, color: string }[]> {
+    const tags = await TagModel.find({ _id: { $in: tagIds }, owner: userId }).select('name color').lean();
+    return tags.map((t: any) => ({
+      id: t._id.toString(),
+      name: t.name,
+      color: t.color,
+    }));
+  }
 }

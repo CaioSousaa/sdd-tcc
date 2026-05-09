@@ -10,6 +10,7 @@ import taskRouter from './routes/task.routes';
 const app = express();
 const PORT = process.env.PORT || 3333;
 
+app.disable('etag');
 app.use(cors());
 app.use(express.json());
 

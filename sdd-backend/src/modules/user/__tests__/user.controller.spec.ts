@@ -55,7 +55,7 @@ describe('UserController.create — validação de campos obrigatórios', () => 
 
 describe('UserController.create — respostas de negócio', () => {
   it('returns 201 on successful registration', async () => {
-    mockService.createUser.mockResolvedValue(undefined);
+    mockService.createUser.mockResolvedValue({} as any);
     const req = { body: { name: 'Caio', email: 'a@b.com', password: 'secret' } } as Request;
     const res = mockRes();
 

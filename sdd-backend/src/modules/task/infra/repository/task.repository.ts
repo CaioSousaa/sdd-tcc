@@ -29,8 +29,18 @@ export class TaskRepository implements TaskRepositoryPort {
     return task ? this.mapToTask(task) : null;
   }
 
-  async findAllByOwner(owner: string): Promise<Task[]> {
-    const tasks = await TaskModel.find({ owner });
+  async findAllByOwner(owner: string, filters?: { priority?: string; tags?: string[] }): Promise<Task[]> {
+    const query: any = { owner };
+    
+    if (filters?.priority) {
+      query.priority = filters.priority;
+    }
+    
+    if (filters?.tags && filters.tags.length > 0) {
+      query.tags = { $all: filters.tags };
+    }
+
+    const tasks = await TaskModel.find(query);
     return tasks.map(task => this.mapToTask(task));
   }
 

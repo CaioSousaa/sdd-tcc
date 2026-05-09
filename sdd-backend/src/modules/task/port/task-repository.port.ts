@@ -18,7 +18,7 @@ export interface Task {
 export interface TaskRepositoryPort {
   create(data: CreateTaskDTO & { owner: string }): Promise<void>;
   findById(id: string): Promise<Task | null>;
-  findAllByOwner(owner: string): Promise<Task[]>;
+  findAllByOwner(owner: string, filters?: { priority?: string; tags?: string[] }): Promise<Task[]>;
   update(id: string, data: UpdateTaskDTO): Promise<Task | null>;
   delete(id: string): Promise<void>;
 }

@@ -13,7 +13,7 @@ beforeEach(() => jest.clearAllMocks());
 describe('UserService.createUser', () => {
   it('should create user and hash the password when email is not taken', async () => {
     mockRepository.findByEmail.mockResolvedValue(null);
-    mockRepository.create.mockResolvedValue(undefined);
+    mockRepository.create.mockResolvedValue({ _id: '1' } as any);
 
     await service.createUser({ name: 'Caio', email: 'caio@test.com', password: 'secret123' });
 

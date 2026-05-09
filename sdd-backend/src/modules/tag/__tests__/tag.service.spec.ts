@@ -4,6 +4,11 @@ import { TagRepositoryPort } from '../port/tag-repository.port';
 const mockRepository: jest.Mocked<TagRepositoryPort> = {
   create: jest.fn(),
   findByOwner: jest.fn(),
+  findAllByOwner: jest.fn(),
+  findById: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
+  findTagsByIdsAndOwner: jest.fn(),
 };
 
 const service = new TagService(mockRepository);
